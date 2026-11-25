@@ -3,13 +3,13 @@ import { colors, layout, radius, spacing, textVariants } from "@/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import {
-    Pressable,
-    StyleSheet,
-    TextInput,
-    View,
-    type StyleProp,
-    type TextInputProps,
-    type ViewStyle,
+  Pressable,
+  StyleSheet,
+  TextInput,
+  View,
+  type StyleProp,
+  type TextInputProps,
+  type ViewStyle,
 } from "react-native";
 
 interface InputProps extends TextInputProps {
@@ -38,16 +38,10 @@ export function Input({
   const [hidden, setHidden] = useState(true);
   const isPassword = !!secureTextEntry;
 
-  const borderColor = error
-    ? colors.danger
-    : focused
-      ? colors.primary
-      : colors.border;
-
   return (
     <View style={containerStyle}>
       {label ? (
-        <AppText variant="label" color="text" style={styles.label}>
+        <AppText variant="label" style={styles.label}>
           {label}
         </AppText>
       ) : null}
@@ -55,8 +49,8 @@ export function Input({
       <View
         style={[
           styles.field,
-          { borderColor },
           focused && styles.focused,
+          !!error && styles.errored,
           !editable && styles.readonly,
         ]}
       >
@@ -64,7 +58,7 @@ export function Input({
           <Ionicons
             name={icon}
             size={20}
-            color={focused ? colors.primary : colors.textSubtle}
+            color={focused ? colors.ink : colors.textSubtle}
             style={styles.leftIcon}
           />
         ) : null}
@@ -75,7 +69,7 @@ export function Input({
           editable={editable}
           secureTextEntry={isPassword && hidden}
           placeholderTextColor={colors.textSubtle}
-          selectionColor={colors.primary}
+          selectionColor={colors.ink}
           style={styles.input}
           onFocus={(e) => {
             setFocused(true);
@@ -117,17 +111,20 @@ export function Input({
 
 const styles = StyleSheet.create({
   label: { marginBottom: spacing.sm },
+  // The border is always 2px (transparent at rest) so focusing never shifts the layout
   field: {
     height: layout.inputHeight,
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: colors.surface,
-    borderWidth: 1.5,
+    backgroundColor: colors.field,
+    borderWidth: 2,
+    borderColor: "transparent",
     borderRadius: radius.md,
     paddingHorizontal: spacing.lg,
   },
-  focused: { backgroundColor: colors.champagneSoft },
-  readonly: { backgroundColor: colors.champagneSoft, opacity: 0.8 },
+  focused: { backgroundColor: colors.paper, borderColor: colors.ink },
+  errored: { borderColor: colors.danger },
+  readonly: { opacity: 0.6 },
   leftIcon: { marginRight: spacing.md },
   input: {
     ...textVariants.body,

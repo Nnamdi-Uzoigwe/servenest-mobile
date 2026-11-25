@@ -1,34 +1,34 @@
 export const colors = {
-  // Brand: emerald ink and champagne
-  primary: "#064e3b",
-  primaryPressed: "#022c22",
-  primarySoft: "#e3efe9",
-  champagne: "#f8e7c9",
-  champagneSoft: "#fcf4e3",
-  champagneDeep: "#ecd3a6",
-  onPrimary: "#f8e7c9",
+  // Emerald ink: the ground and the main action color
+  ink: "#064e3b",
+  inkDeep: "#022c22",
+  inkLift: "#0d6a50",
 
-  // Surfaces
-  background: "#fdf9f1",
-  surface: "#ffffff",
-  border: "#eadfc8",
-  borderStrong: "#d4c5a3",
+  // Champagne: paper, highlights and text on ink
+  champagne: "#f8e7c9",
+  champagneDeep: "#ecd3a6",
+  paper: "#fdf8ec",
+  field: "#f4e8cc",
+  line: "#e6d5ae",
 
   // Text
-  text: "#10201a",
-  textMuted: "#5a6b63",
-  textSubtle: "#8a978f",
+  text: "#0f2a22",
+  textMuted: "#4f6a5f",
+  textSubtle: "#7f9389",
+  onInk: "#f8e7c9",
+  onInkMuted: "rgba(248, 231, 201, 0.72)",
+  inkLine: "rgba(248, 231, 201, 0.22)",
 
-  // Accents and status
-  gold: "#b7791f",
-  success: "#15803d",
-  successSoft: "#dcfce7",
-  warning: "#b45309",
-  warningSoft: "#fef3c7",
+  // Accent
+  brass: "#a8741a",
+
+  // Status
+  success: "#166534",
+  successSoft: "#dcefd9",
+  warning: "#9a5b07",
+  warningSoft: "#fbefcf",
   danger: "#b42318",
-  dangerSoft: "#fee4e2",
-  info: "#0e7490",
-  infoSoft: "#cffafe",
+  dangerSoft: "#fde8e4",
 } as const;
 
 export type ColorKey = keyof typeof colors;

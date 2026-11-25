@@ -1,6 +1,6 @@
 import { AppText } from "@/components/ui/AppText";
 import { Button } from "@/components/ui/Button";
-import { colors, spacing } from "@/theme";
+import { colors, radius, spacing } from "@/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet, View } from "react-native";
 
@@ -21,14 +21,14 @@ export function EmptyState({
 }: EmptyStateProps) {
   return (
     <View style={styles.wrap}>
-      <View style={styles.iconCircle}>
-        <Ionicons name={icon} size={34} color={colors.primary} />
+      <View style={styles.tile}>
+        <Ionicons name={icon} size={28} color={colors.ink} />
       </View>
-      <AppText variant="h3" align="center" style={styles.title}>
+      <AppText variant="h2" style={styles.title}>
         {title}
       </AppText>
       {message ? (
-        <AppText variant="body" color="textMuted" align="center">
+        <AppText variant="body" color="textMuted">
           {message}
         </AppText>
       ) : null}
@@ -36,6 +36,7 @@ export function EmptyState({
         <Button
           title={actionLabel}
           onPress={onAction}
+          size="md"
           fullWidth={false}
           style={styles.action}
         />
@@ -45,16 +46,11 @@ export function EmptyState({
 }
 
 const styles = StyleSheet.create({
-  wrap: {
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: spacing.xxxl,
-    paddingHorizontal: spacing.xl,
-  },
-  iconCircle: {
-    width: 76,
-    height: 76,
-    borderRadius: 38,
+  wrap: { alignItems: "flex-start", paddingTop: spacing.sm },
+  tile: {
+    width: 60,
+    height: 60,
+    borderRadius: radius.lg,
     backgroundColor: colors.champagne,
     alignItems: "center",
     justifyContent: "center",

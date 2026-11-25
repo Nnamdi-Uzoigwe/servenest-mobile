@@ -1,14 +1,18 @@
 import { queryClient } from "@/lib/queryClient";
 import { useAuthStore } from "@/store/authStore";
+import { colors } from "@/theme";
+import {
+  BricolageGrotesque_700Bold,
+  BricolageGrotesque_800ExtraBold,
+} from "@expo-google-fonts/bricolage-grotesque";
 import {
   Poppins_400Regular,
   Poppins_500Medium,
   Poppins_600SemiBold,
-  Poppins_700Bold,
   useFonts,
 } from "@expo-google-fonts/poppins";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { Slot } from "expo-router";
+import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
@@ -16,12 +20,43 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 SplashScreen.preventAutoHideAsync();
 
+function RootNavigator() {
+  const status = useAuthStore((s) => s.status);
+  const role = useAuthStore((s) => s.user?.role);
+  const signedIn = status === "signedIn";
+
+  return (
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        contentStyle: { backgroundColor: colors.paper },
+      }}
+    >
+      {/* Always available: decides where to send the person */}
+      <Stack.Screen name="index" />
+
+      <Stack.Protected guard={!signedIn}>
+        <Stack.Screen name="(auth)" />
+      </Stack.Protected>
+
+      <Stack.Protected guard={signedIn && role === "customer"}>
+        <Stack.Screen name="(customer)" />
+      </Stack.Protected>
+
+      <Stack.Protected guard={signedIn && role === "technician"}>
+        <Stack.Screen name="(technician)" />
+      </Stack.Protected>
+    </Stack>
+  );
+}
+
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
     Poppins_400Regular,
     Poppins_500Medium,
     Poppins_600SemiBold,
-    Poppins_700Bold,
+    BricolageGrotesque_700Bold,
+    BricolageGrotesque_800ExtraBold,
   });
 
   const status = useAuthStore((s) => s.status);
@@ -43,7 +78,7 @@ export default function RootLayout() {
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
         <StatusBar style="dark" />
-        <Slot />
+        <RootNavigator />
       </SafeAreaProvider>
     </QueryClientProvider>
   );

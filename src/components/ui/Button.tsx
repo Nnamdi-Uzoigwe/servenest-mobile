@@ -2,16 +2,16 @@ import { AppText } from "@/components/ui/AppText";
 import { colors, layout, radius, spacing, type ColorKey } from "@/theme";
 import { Ionicons } from "@expo/vector-icons";
 import {
-    ActivityIndicator,
-    Pressable,
-    StyleSheet,
-    View,
-    type PressableProps,
-    type StyleProp,
-    type ViewStyle,
+  ActivityIndicator,
+  Pressable,
+  StyleSheet,
+  View,
+  type PressableProps,
+  type StyleProp,
+  type ViewStyle,
 } from "react-native";
 
-type Variant = "primary" | "secondary" | "outline" | "ghost";
+type Variant = "primary" | "champagne" | "tonal" | "ghost" | "ghostOnInk";
 type Size = "md" | "lg";
 
 interface ButtonProps extends Omit<PressableProps, "style" | "children"> {
@@ -26,38 +26,23 @@ interface ButtonProps extends Omit<PressableProps, "style" | "children"> {
 
 const VARIANTS: Record<
   Variant,
-  { bg: string; pressedBg: string; fg: ColorKey; border: string }
+  { bg: string; pressedBg: string; fg: ColorKey }
 > = {
-  primary: {
-    bg: colors.primary,
-    pressedBg: colors.primaryPressed,
-    fg: "onPrimary",
-    border: colors.primary,
-  },
-  secondary: {
+  primary: { bg: colors.ink, pressedBg: colors.inkDeep, fg: "onInk" },
+  champagne: {
     bg: colors.champagne,
     pressedBg: colors.champagneDeep,
-    fg: "primary",
-    border: colors.champagne,
+    fg: "ink",
   },
-  outline: {
-    bg: "transparent",
-    pressedBg: colors.primarySoft,
-    fg: "primary",
-    border: colors.primary,
-  },
-  ghost: {
-    bg: "transparent",
-    pressedBg: colors.primarySoft,
-    fg: "primary",
-    border: "transparent",
-  },
+  tonal: { bg: colors.champagneDeep, pressedBg: colors.champagne, fg: "ink" },
+  ghost: { bg: "transparent", pressedBg: colors.champagne, fg: "ink" },
+  ghostOnInk: { bg: "transparent", pressedBg: colors.inkLift, fg: "onInk" },
 };
 
 export function Button({
   title,
   variant = "primary",
-  size = "md",
+  size = "lg",
   loading = false,
   fullWidth = true,
   icon,
@@ -79,7 +64,7 @@ export function Button({
         {
           height: layout.buttonHeight[size],
           backgroundColor: pressed ? v.pressedBg : v.bg,
-          borderColor: v.border,
+          transform: [{ scale: pressed ? 0.985 : 1 }],
         },
         fullWidth ? styles.full : styles.auto,
         isDisabled && styles.disabled,
@@ -109,8 +94,7 @@ export function Button({
 
 const styles = StyleSheet.create({
   base: {
-    borderRadius: radius.lg,
-    borderWidth: 1.5,
+    borderRadius: radius.md,
     paddingHorizontal: spacing.xl,
     alignItems: "center",
     justifyContent: "center",
