@@ -1,7 +1,9 @@
-import { AppText, Button, Panel } from "@/components/ui";
+import { AppText, Avatar, Button, Notice, Panel } from "@/components/ui";
+import { useAvatarUpload } from "@/lib/useAvatarUpload";
 import { useAuthStore } from "@/store/authStore";
 import { colors, radius, spacing } from "@/theme";
-import { StyleSheet, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { ActivityIndicator, Alert, Pressable, StyleSheet, View } from "react-native";
 
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
@@ -20,25 +22,39 @@ export function AccountPanel() {
   const user = useAuthStore((s) => s.user);
   const approval = useAuthStore((s) => s.technicianProfile?.approvalStatus);
   const signOut = useAuthStore((s) => s.signOut);
+  const { pick, uploading, error } = useAvatarUpload();
 
   if (!user) return null;
 
-  const initials = user.fullName
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((p) => p[0]!.toUpperCase())
-    .join("");
+  function changePhoto() {
+    Alert.alert("Profile photo", undefined, [
+      { text: "Choose from gallery", onPress: () => void pick("library") },
+      { text: "Take a photo", onPress: () => void pick("camera") },
+      { text: "Cancel", style: "cancel" },
+    ]);
+  }
 
   return (
     <>
       <Panel tone="champagne" style={styles.panel}>
         <View style={styles.identity}>
-          <View style={styles.avatar}>
-            <AppText variant="h2" color="onInk">
-              {initials}
-            </AppText>
-          </View>
+          <Pressable
+            onPress={changePhoto}
+            disabled={uploading}
+            accessibilityRole="button"
+            accessibilityLabel="Change profile photo"
+            style={styles.avatarWrap}
+          >
+            <Avatar name={user.fullName} uri={user.avatar?.url} size={64} />
+            <View style={styles.badge}>
+              {uploading ? (
+                <ActivityIndicator size="small" color={colors.onInk} />
+              ) : (
+                <Ionicons name="camera" size={13} color={colors.onInk} />
+              )}
+            </View>
+          </Pressable>
+
           <View style={styles.meta}>
             <AppText variant="h3">{user.fullName}</AppText>
             <AppText variant="caption" color="textMuted">
@@ -46,6 +62,12 @@ export function AccountPanel() {
             </AppText>
           </View>
         </View>
+
+        {error ? (
+          <View style={styles.notice}>
+            <Notice message={error} />
+          </View>
+        ) : null}
 
         <View style={styles.rows}>
           <InfoRow
@@ -70,16 +92,22 @@ export function AccountPanel() {
 const styles = StyleSheet.create({
   panel: { marginBottom: spacing.lg },
   identity: { flexDirection: "row", alignItems: "center" },
-  avatar: {
-    width: 56,
-    height: 56,
+  avatarWrap: { marginRight: spacing.lg },
+  badge: {
+    position: "absolute",
+    right: -2,
+    bottom: -2,
+    width: 24,
+    height: 24,
     borderRadius: radius.pill,
-    backgroundColor: colors.ink,
+    backgroundColor: colors.inkLift,
+    borderWidth: 2,
+    borderColor: colors.champagne,
     alignItems: "center",
     justifyContent: "center",
-    marginRight: spacing.lg,
   },
   meta: { flex: 1 },
+  notice: { marginTop: spacing.lg },
   rows: { marginTop: spacing.lg },
   infoRow: {
     flexDirection: "row",

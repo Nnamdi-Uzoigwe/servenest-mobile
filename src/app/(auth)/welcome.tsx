@@ -85,7 +85,7 @@ export default function Welcome() {
           description="Book approved technicians and follow every job."
           onPress={() => {
             setIntent("customer");
-            router.push("/customer/signup");
+            router.push("/customer/intro");
           }}
         />
         <RoleSlab

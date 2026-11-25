@@ -1,4 +1,5 @@
 export { AppText } from "@/components/ui/AppText";
+export { Avatar } from "@/components/ui/Avatar";
 export { BackButton } from "@/components/ui/BackButton";
 export { Button } from "@/components/ui/Button";
 export { EmptyState } from "@/components/ui/EmptyState";

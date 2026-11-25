@@ -35,7 +35,15 @@
       ],
       "expo-font",
       "expo-secure-store",
-      "expo-status-bar"
+      "expo-status-bar",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "ServeNest uses your photos so you can add a profile picture.",
+          "cameraPermission": "ServeNest uses your camera so you can take a profile picture."
+        }
+      ],
+      "expo-image"
     ],
     "experiments": {
       "typedRoutes": true,

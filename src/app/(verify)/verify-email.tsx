@@ -1,4 +1,11 @@
-import { AppText, Button, Notice, OtpInput, Screen } from "@/components/ui";
+import {
+  AppText,
+  Button,
+  Notice,
+  OtpInput,
+  Screen,
+  StepProgress,
+} from "@/components/ui";
 import { ApiError, errorMessage } from "@/lib/api";
 import { useCountdown } from "@/lib/useCountDown";
 import { useAuthStore } from "@/store/authStore";
@@ -10,17 +17,26 @@ import { Pressable, StyleSheet, View } from "react-native";
 const CODE_LENGTH = 6;
 
 export default function VerifyEmail() {
-  const email = useAuthStore((s) => s.user?.email ?? "");
+  const user = useAuthStore((s) => s.user);
   const verifyEmail = useAuthStore((s) => s.verifyEmail);
   const resendVerification = useAuthStore((s) => s.resendVerification);
   const signOut = useAuthStore((s) => s.signOut);
+
+  const email = user?.email ?? "";
+
+  // A code goes out when the account is created, so the resend cooldown is already running
+  const sinceCreated = user
+    ? (Date.now() - new Date(user.createdAt).getTime()) / 1000
+    : 60;
+  const { seconds, restart } = useCountdown(
+    Math.max(0, Math.ceil(60 - sinceCreated)),
+  );
 
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
   const [info, setInfo] = useState("");
   const [verifying, setVerifying] = useState(false);
   const [resending, setResending] = useState(false);
-  const { seconds, restart } = useCountdown(0);
 
   async function submit(value: string) {
     if (verifying || value.length !== CODE_LENGTH) return;
@@ -28,7 +44,7 @@ export default function VerifyEmail() {
     setError("");
     setInfo("");
     try {
-      // Once verified, the route guards move the person to their home screen
+      // Once verified, the route guards move the person to the next screen
       await verifyEmail(value);
     } catch (err) {
       setError(errorMessage(err));
@@ -57,6 +73,11 @@ export default function VerifyEmail() {
 
   return (
     <Screen scroll avoidKeyboard contentContainerStyle={styles.content}>
+      {/* Customers see their 3 step setup. The technician version comes in 7d. */}
+      {user?.role === "customer" ? (
+        <StepProgress total={3} current={1} />
+      ) : null}
+
       <View style={styles.tile}>
         <Ionicons name="mail-outline" size={30} color={colors.ink} />
       </View>
@@ -121,7 +142,7 @@ export default function VerifyEmail() {
 }
 
 const styles = StyleSheet.create({
-  content: { paddingTop: spacing.xxxl, paddingBottom: spacing.xl },
+  content: { paddingTop: spacing.lg, paddingBottom: spacing.xl },
   tile: {
     width: 64,
     height: 64,
@@ -129,6 +150,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.champagne,
     alignItems: "center",
     justifyContent: "center",
+    marginTop: spacing.xxl,
     marginBottom: spacing.xl,
   },
   title: { marginBottom: spacing.md },
