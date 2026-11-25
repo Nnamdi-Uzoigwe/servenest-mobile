@@ -23,6 +23,7 @@ SplashScreen.preventAutoHideAsync();
 function RootNavigator() {
   const status = useAuthStore((s) => s.status);
   const role = useAuthStore((s) => s.user?.role);
+  const verified = useAuthStore((s) => !!s.user?.isEmailVerified);
   const signedIn = status === "signedIn";
 
   return (
@@ -39,11 +40,16 @@ function RootNavigator() {
         <Stack.Screen name="(auth)" />
       </Stack.Protected>
 
-      <Stack.Protected guard={signedIn && role === "customer"}>
+      {/* Signed in, but the email is not verified yet: both roles land here */}
+      <Stack.Protected guard={signedIn && !verified}>
+        <Stack.Screen name="(verify)" />
+      </Stack.Protected>
+
+      <Stack.Protected guard={signedIn && verified && role === "customer"}>
         <Stack.Screen name="(customer)" />
       </Stack.Protected>
 
-      <Stack.Protected guard={signedIn && role === "technician"}>
+      <Stack.Protected guard={signedIn && verified && role === "technician"}>
         <Stack.Screen name="(technician)" />
       </Stack.Protected>
     </Stack>

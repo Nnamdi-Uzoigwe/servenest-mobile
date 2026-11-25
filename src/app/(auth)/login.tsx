@@ -1,16 +1,16 @@
 import {
-    AppText,
-    BackButton,
-    Button,
-    Input,
-    Notice,
-    Screen,
+  AppText,
+  BackButton,
+  Button,
+  Input,
+  Notice,
+  Screen,
 } from "@/components/ui";
 import { errorMessage } from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
 import { useOnboardingStore } from "@/store/onboardingStore";
 import { spacing } from "@/theme";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useRef, useState } from "react";
 import { Pressable, StyleSheet, TextInput, View } from "react-native";
 
@@ -22,10 +22,11 @@ interface Errors {
 
 export default function Login() {
   const router = useRouter();
+  const params = useLocalSearchParams<{ email?: string; reset?: string }>();
   const signIn = useAuthStore((s) => s.signIn);
   const intent = useOnboardingStore((s) => s.intent);
 
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(params.email ?? "");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<Errors>({});
   const [loading, setLoading] = useState(false);
@@ -41,7 +42,7 @@ export default function Login() {
 
     setLoading(true);
     try {
-      // On success the route guards move the person to the right home screen
+      // On success the route guards move the person to the right screen
       await signIn(email, password);
     } catch (err) {
       setErrors({ form: errorMessage(err) });
@@ -66,6 +67,14 @@ export default function Login() {
         Sign in to your ServeNest account.
       </AppText>
 
+      {params.reset === "1" && !errors.form ? (
+        <View style={styles.notice}>
+          <Notice
+            tone="info"
+            message="Password updated. Sign in with your new password."
+          />
+        </View>
+      ) : null}
       {errors.form ? (
         <View style={styles.notice}>
           <Notice message={errors.form} />
@@ -98,15 +107,24 @@ export default function Login() {
         returnKeyType="go"
         onSubmitEditing={submit}
         inputRef={passwordRef}
-        containerStyle={styles.field}
       />
 
-      <Button
-        title="Sign in"
-        loading={loading}
-        onPress={submit}
-        style={styles.submit}
-      />
+      <Pressable
+        onPress={() =>
+          router.push({
+            pathname: "/forgot-password",
+            params: { email: email.trim() },
+          })
+        }
+        hitSlop={10}
+        style={styles.forgot}
+      >
+        <AppText variant="bodyMedium" color="ink">
+          Forgot password?
+        </AppText>
+      </Pressable>
+
+      <Button title="Sign in" loading={loading} onPress={submit} />
 
       <View style={styles.footer}>
         <AppText variant="body" color="textMuted">
@@ -128,7 +146,11 @@ const styles = StyleSheet.create({
   sub: { marginTop: spacing.xs, marginBottom: spacing.xxl },
   notice: { marginBottom: spacing.lg },
   field: { marginBottom: spacing.lg },
-  submit: { marginTop: spacing.sm },
+  forgot: {
+    alignSelf: "flex-end",
+    marginTop: spacing.md,
+    marginBottom: spacing.xl,
+  },
   footer: {
     flexDirection: "row",
     justifyContent: "center",
