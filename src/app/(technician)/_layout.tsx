@@ -15,6 +15,7 @@ export default function TechnicianLayout() {
 
       <Stack.Protected guard={!approved}>
         <Stack.Screen name="approval-status" />
+        <Stack.Screen name="edit-application" />
       </Stack.Protected>
     </Stack>
   );

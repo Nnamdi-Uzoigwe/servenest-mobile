@@ -79,3 +79,27 @@ export interface RegisterTechnicianInput extends RegisterCustomerInput {
   workingLocations: WorkingLocation[];
   weeklyAvailability?: AvailabilitySlot[];
 }
+
+export type DocumentType = "id_card" | "certificate" | "license" | "other";
+
+export interface TechnicianDocument {
+  _id: string;
+  type: DocumentType;
+  name: string;
+  url: string;
+  publicId: string;
+  uploadedAt: string;
+}
+
+export interface TechnicianProfile extends TechnicianSummary {
+  user: string;
+  residentialAddress: string;
+  bio?: string;
+  yearsOfExperience: number;
+  specializations: string[];
+  workingLocations: WorkingLocation[];
+  weeklyAvailability: AvailabilitySlot[];
+  documents: TechnicianDocument[];
+  createdAt: string;
+  updatedAt: string;
+}

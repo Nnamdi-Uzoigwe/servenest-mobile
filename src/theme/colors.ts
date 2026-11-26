@@ -8,6 +8,7 @@ export const colors = {
   champagne: "#f8e7c9",
   champagneDeep: "#ecd3a6",
   paper: "#fdf8ec",
+  white: "#ffffff",
   field: "#f4e8cc",
   line: "#e6d5ae",
 

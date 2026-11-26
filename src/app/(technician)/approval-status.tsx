@@ -1,9 +1,16 @@
+import { ApplicationChecklist } from "@/components/technician/ApplicationChecklist";
 import { AppText, Button, Notice, Panel, Screen } from "@/components/ui";
-import { errorMessage } from "@/lib/api";
+import { api, errorMessage } from "@/lib/api";
+import {
+  technicianProfileKey,
+  useTechnicianProfile,
+} from "@/lib/useTechnicianProfile";
 import { useAuthStore } from "@/store/authStore";
 import { colors, radius, spacing } from "@/theme";
 import type { TechnicianApprovalStatus } from "@/types/api";
 import { Ionicons } from "@expo/vector-icons";
+import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 
@@ -23,7 +30,7 @@ const COPY: Record<
     icon: "close-circle-outline",
     title: "Your application was not approved",
     message:
-      "Read the reason below. Contact support if you think this is a mistake.",
+      "Read the reason below, fix what is needed, then resubmit. Contact support if you think this is a mistake.",
   },
   suspended: {
     icon: "ban-outline",
@@ -33,9 +40,12 @@ const COPY: Record<
 };
 
 export default function ApprovalStatus() {
+  const router = useRouter();
+  const queryClient = useQueryClient();
   const profile = useAuthStore((s) => s.technicianProfile);
   const refreshMe = useAuthStore((s) => s.refreshMe);
   const signOut = useAuthStore((s) => s.signOut);
+  const { data: full } = useTechnicianProfile();
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -51,6 +61,7 @@ export default function ApprovalStatus() {
       : status === "suspended"
         ? profile?.suspensionReason
         : undefined;
+  const hasId = !!full?.documents.some((d) => d.type === "id_card");
 
   async function check() {
     setLoading(true);
@@ -58,6 +69,25 @@ export default function ApprovalStatus() {
     try {
       // If the account was approved, the route guards switch to the dashboard
       await refreshMe();
+    } catch (err) {
+      setError(errorMessage(err));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function resubmit() {
+    if (!hasId) {
+      setError("Add your government ID before you resubmit.");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+    try {
+      await api.post("/technicians/me/resubmit", {});
+      await refreshMe();
+      await queryClient.invalidateQueries({ queryKey: technicianProfileKey });
     } catch (err) {
       setError(errorMessage(err));
     } finally {
@@ -89,6 +119,12 @@ export default function ApprovalStatus() {
         </Panel>
       ) : null}
 
+      {status !== "suspended" ? (
+        <View style={styles.checklist}>
+          <ApplicationChecklist />
+        </View>
+      ) : null}
+
       {error ? (
         <View style={styles.notice}>
           <Notice message={error} />
@@ -96,7 +132,24 @@ export default function ApprovalStatus() {
       ) : null}
 
       <View style={styles.actions}>
-        <Button title="Check status" loading={loading} onPress={check} />
+        {status === "rejected" ? (
+          <Button
+            title="Resubmit application"
+            loading={loading}
+            onPress={resubmit}
+          />
+        ) : (
+          <Button title="Check status" loading={loading} onPress={check} />
+        )}
+
+        {status !== "suspended" ? (
+          <Button
+            title="Edit details"
+            variant="tonal"
+            onPress={() => router.push("/edit-application")}
+          />
+        ) : null}
+
         <Button title="Sign out" variant="ghost" onPress={() => signOut()} />
       </View>
     </Screen>
@@ -117,6 +170,7 @@ const styles = StyleSheet.create({
   title: { marginBottom: spacing.md },
   reason: { marginTop: spacing.xl },
   reasonText: { marginTop: spacing.xs },
+  checklist: { marginTop: spacing.xxl },
   notice: { marginTop: spacing.lg },
   actions: { marginTop: spacing.xxl, gap: spacing.sm },
 });
