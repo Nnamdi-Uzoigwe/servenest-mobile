@@ -1,31 +1,30 @@
 import type { TextStyle } from "react-native";
 
 export const fonts = {
-  displayExtraBold: "BricolageGrotesque_800ExtraBold",
-  display: "BricolageGrotesque_700Bold",
   regular: "Poppins_400Regular",
   medium: "Poppins_500Medium",
   semibold: "Poppins_600SemiBold",
+  bold: "Poppins_700Bold",
 } as const;
 
 export const textVariants = {
   display: {
-    fontFamily: fonts.displayExtraBold,
-    fontSize: 40,
+    fontFamily: fonts.bold,
+    fontSize: 36,
     lineHeight: 44,
-    letterSpacing: -1,
+    letterSpacing: -0.8,
   },
   h1: {
-    fontFamily: fonts.display,
-    fontSize: 30,
+    fontFamily: fonts.bold,
+    fontSize: 28,
     lineHeight: 36,
-    letterSpacing: -0.6,
+    letterSpacing: -0.4,
   },
   h2: {
-    fontFamily: fonts.display,
-    fontSize: 22,
+    fontFamily: fonts.semibold,
+    fontSize: 21,
     lineHeight: 28,
-    letterSpacing: -0.3,
+    letterSpacing: -0.2,
   },
   h3: { fontFamily: fonts.semibold, fontSize: 17, lineHeight: 24 },
   body: { fontFamily: fonts.regular, fontSize: 15, lineHeight: 23 },
