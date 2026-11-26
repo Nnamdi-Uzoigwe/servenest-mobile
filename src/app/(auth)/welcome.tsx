@@ -94,7 +94,7 @@ export default function Welcome() {
           description="Get approved, take jobs and track your earnings."
           onPress={() => {
             setIntent("technician");
-            router.push("/technician/signup");
+            router.push("/technician/intro");
           }}
         />
       </View>

@@ -32,6 +32,7 @@ export function Input({
   onFocus,
   onBlur,
   editable = true,
+  multiline = false,
   ...rest
 }: InputProps) {
   const [focused, setFocused] = useState(false);
@@ -49,6 +50,7 @@ export function Input({
       <View
         style={[
           styles.field,
+          multiline ? styles.fieldMultiline : styles.fieldSingle,
           focused && styles.focused,
           !!error && styles.errored,
           !editable && styles.readonly,
@@ -59,18 +61,19 @@ export function Input({
             name={icon}
             size={20}
             color={focused ? colors.ink : colors.textSubtle}
-            style={styles.leftIcon}
+            style={[styles.leftIcon, multiline && styles.leftIconMultiline]}
           />
         ) : null}
 
         <TextInput
           {...rest}
           ref={inputRef}
+          multiline={multiline}
           editable={editable}
           secureTextEntry={isPassword && hidden}
           placeholderTextColor={colors.textSubtle}
           selectionColor={colors.ink}
-          style={styles.input}
+          style={[styles.input, multiline && styles.inputMultiline]}
           onFocus={(e) => {
             setFocused(true);
             onFocus?.(e);
@@ -113,24 +116,30 @@ const styles = StyleSheet.create({
   label: { marginBottom: spacing.sm },
   // The border is always 2px (transparent at rest) so focusing never shifts the layout
   field: {
-    height: layout.inputHeight,
     flexDirection: "row",
-    alignItems: "center",
     backgroundColor: colors.field,
     borderWidth: 2,
     borderColor: "transparent",
     borderRadius: radius.md,
     paddingHorizontal: spacing.lg,
   },
+  fieldSingle: { height: layout.inputHeight, alignItems: "center" },
+  fieldMultiline: {
+    minHeight: 120,
+    alignItems: "flex-start",
+    paddingVertical: 14,
+  },
   focused: { backgroundColor: colors.paper, borderColor: colors.ink },
   errored: { borderColor: colors.danger },
   readonly: { opacity: 0.6 },
   leftIcon: { marginRight: spacing.md },
+  leftIconMultiline: { marginTop: 2 },
   input: {
     ...textVariants.body,
     flex: 1,
     color: colors.text,
     paddingVertical: 0,
   },
+  inputMultiline: { minHeight: 90, textAlignVertical: "top" },
   helper: { marginTop: spacing.xs },
 });

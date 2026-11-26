@@ -77,6 +77,9 @@ export default function VerifyEmail() {
       {user?.role === "customer" ? (
         <StepProgress total={3} current={1} />
       ) : null}
+      {user?.role === "technician" ? (
+        <StepProgress total={6} current={5} />
+      ) : null}
 
       <View style={styles.tile}>
         <Ionicons name="mail-outline" size={30} color={colors.ink} />
