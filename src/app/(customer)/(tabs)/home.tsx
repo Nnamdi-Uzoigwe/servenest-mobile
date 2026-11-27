@@ -1,5 +1,5 @@
+import { CatalogHome } from "@/components/catalog/CatalogHome";
 import { TabScaffold } from "@/components/shell/TabScaffold";
-import { EmptyState } from "@/components/ui";
 import { useAuthStore } from "@/store/authStore";
 
 export default function CustomerHome() {
@@ -12,11 +12,7 @@ export default function CustomerHome() {
       title={`Hello, ${firstName}`}
       subtitle="What needs fixing today?"
     >
-      <EmptyState
-        icon="construct-outline"
-        title="Services are on the way"
-        message="You will browse and book home services here once the booking system is built."
-      />
+      <CatalogHome />
     </TabScaffold>
   );
 }

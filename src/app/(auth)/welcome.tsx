@@ -1,4 +1,5 @@
 import { AppText, Screen } from "@/components/ui";
+import { GUEST_BROWSING } from "@/constants/features";
 import { useStatusBar } from "@/lib/useStatusBar";
 import { useOnboardingStore } from "@/store/onboardingStore";
 import { colors, radius, spacing } from "@/theme";
@@ -100,14 +101,29 @@ export default function Welcome() {
       </View>
 
       <View style={styles.footer}>
-        <AppText variant="body" color="onInkMuted">
-          Already have an account?
-        </AppText>
-        <Pressable onPress={() => router.push("/login")} hitSlop={10}>
-          <AppText variant="bodyMedium" color="onInk">
-            Sign in
+        {GUEST_BROWSING ? (
+          <View style={styles.footerRow}>
+            <AppText variant="body" color="onInkMuted">
+              Just looking?
+            </AppText>
+            <Pressable onPress={() => router.push("/explore")} hitSlop={10}>
+              <AppText variant="bodyMedium" color="onInk">
+                Browse services
+              </AppText>
+            </Pressable>
+          </View>
+        ) : null}
+
+        <View style={styles.footerRow}>
+          <AppText variant="body" color="onInkMuted">
+            Already have an account?
           </AppText>
-        </Pressable>
+          <Pressable onPress={() => router.push("/login")} hitSlop={10}>
+            <AppText variant="bodyMedium" color="onInk">
+              Sign in
+            </AppText>
+          </Pressable>
+        </View>
       </View>
     </Screen>
   );
@@ -143,11 +159,11 @@ const styles = StyleSheet.create({
   },
   chevronInk: { backgroundColor: colors.ink },
   chevronChampagne: { backgroundColor: colors.champagne },
-  footer: {
+  footer: { paddingVertical: spacing.xl, gap: spacing.md },
+  footerRow: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
     gap: spacing.sm,
-    paddingVertical: spacing.xl,
   },
 });

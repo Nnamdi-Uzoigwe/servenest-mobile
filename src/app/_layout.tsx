@@ -1,3 +1,4 @@
+import { GUEST_BROWSING } from "@/constants/features";
 import { queryClient } from "@/lib/queryClient";
 import { useAuthStore } from "@/store/authStore";
 import { colors } from "@/theme";
@@ -21,7 +22,10 @@ function RootNavigator() {
   const status = useAuthStore((s) => s.status);
   const role = useAuthStore((s) => s.user?.role);
   const verified = useAuthStore((s) => !!s.user?.isEmailVerified);
+
   const signedIn = status === "signedIn";
+  const guestAllowed = !signedIn && GUEST_BROWSING;
+  const customerReady = signedIn && verified && role === "customer";
 
   return (
     <Stack
@@ -37,12 +41,22 @@ function RootNavigator() {
         <Stack.Screen name="(auth)" />
       </Stack.Protected>
 
+      {/* Browsing without an account */}
+      <Stack.Protected guard={guestAllowed}>
+        <Stack.Screen name="(guest)" />
+      </Stack.Protected>
+
+      {/* The service catalogue: guests and verified customers, never technicians */}
+      <Stack.Protected guard={guestAllowed || customerReady}>
+        <Stack.Screen name="catalog" />
+      </Stack.Protected>
+
       {/* Signed in, but the email is not verified yet: both roles land here */}
       <Stack.Protected guard={signedIn && !verified}>
         <Stack.Screen name="(verify)" />
       </Stack.Protected>
 
-      <Stack.Protected guard={signedIn && verified && role === "customer"}>
+      <Stack.Protected guard={customerReady}>
         <Stack.Screen name="(customer)" />
       </Stack.Protected>
 

@@ -10,11 +10,19 @@ import {
 } from "react-native";
 import { SafeAreaView, type Edge } from "react-native-safe-area-context";
 
+type Ground = "paper" | "ink" | "white";
+
+const GROUNDS: Record<Ground, string> = {
+  paper: colors.paper,
+  ink: colors.ink,
+  white: colors.white,
+};
+
 interface ScreenProps {
   children: React.ReactNode;
   scroll?: boolean;
   padded?: boolean;
-  ground?: "paper" | "ink";
+  ground?: Ground;
   avoidKeyboard?: boolean;
   edges?: Edge[];
   style?: StyleProp<ViewStyle>;
@@ -52,11 +60,7 @@ export function Screen({
   return (
     <SafeAreaView
       edges={edges}
-      style={[
-        styles.flex,
-        { backgroundColor: ground === "ink" ? colors.ink : colors.paper },
-        style,
-      ]}
+      style={[styles.flex, { backgroundColor: GROUNDS[ground] }, style]}
     >
       {avoidKeyboard ? (
         <KeyboardAvoidingView

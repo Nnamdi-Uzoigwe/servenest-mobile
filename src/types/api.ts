@@ -103,3 +103,59 @@ export interface TechnicianProfile extends TechnicianSummary {
   createdAt: string;
   updatedAt: string;
 }
+
+export type IconKey =
+  | "plumbing"
+  | "electrical"
+  | "ac"
+  | "cleaning"
+  | "generator"
+  | "painting"
+  | "appliance"
+  | "carpentry"
+  | "pest"
+  | "maintenance"
+  | "other";
+
+export interface CatalogImage {
+  url: string;
+  publicId: string;
+}
+
+export interface CatalogCategory {
+  _id: string;
+  name: string;
+  slug: string;
+  description: string;
+  iconKey: IconKey;
+  image?: CatalogImage;
+  sortOrder: number;
+  serviceCount: number;
+}
+
+export interface CatalogCategoryRef {
+  _id: string;
+  name: string;
+  slug: string;
+  iconKey: IconKey;
+}
+
+export interface CatalogService {
+  _id: string;
+  category: CatalogCategoryRef;
+  name: string;
+  slug: string;
+  description: string;
+  image?: CatalogImage;
+  // Whole kobo, so 850000 means 8,500 naira
+  startingPrice: number;
+  pricingNote: string;
+  estimatedDurationMinutes: number;
+  isAvailable: boolean;
+  isFeatured: boolean;
+}
+
+export interface CatalogServiceList {
+  items: CatalogService[];
+  pagination: { page: number; limit: number; total: number; pages: number };
+}

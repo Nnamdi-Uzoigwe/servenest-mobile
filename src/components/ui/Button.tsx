@@ -83,7 +83,7 @@ export function Button({
               style={styles.icon}
             />
           ) : null}
-          <AppText variant="button" color={v.fg}>
+          <AppText variant="button" color={v.fg} style={styles.title}>
             {title}
           </AppText>
         </View>
@@ -104,4 +104,8 @@ const styles = StyleSheet.create({
   disabled: { opacity: 0.5 },
   row: { flexDirection: "row", alignItems: "center" },
   icon: { marginRight: spacing.sm },
+  title: {
+    fontWeight: 800,
+    fontSize: 18,
+  },
 });
